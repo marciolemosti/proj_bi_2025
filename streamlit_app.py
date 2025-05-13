@@ -9,22 +9,35 @@ import math
 from prophet import Prophet
 from prophet.plot import plot_plotly, plot_components_plotly
 import base64
+import os # Adicionado para os.environ
 
 def decode_base64(encoded_string):
     """Decodes a Base64 encoded string."""
     return base64.b64decode(encoded_string).decode("utf-8")
 
-# --- Database Credentials (Use environment variables in production!) ---
-DB_HOST = "aws-0-us-west-1.pooler.supabase.com"
-DB_PORT = "6543"
-DB_NAME = "postgres"
-DB_USER = "postgres.exjrfoajzobkncnoompk"
-DB_PASSWORD = decode_base64("cHJvamV0b2JpMTIz")
+# --- Database Credentials (Lidas de st.secrets para produção) ---
+# Para desenvolvimento local, você pode descomentar as linhas abaixo
+# ou configurar um arquivo secrets.toml local.
+# DB_HOST = "aws-0-us-west-1.pooler.supabase.com"
+# DB_PORT = "6543"
+# DB_NAME = "postgres"
+# DB_USER = "postgres.exjrfoajzobkncnoompk"
+# DB_PASSWORD = decode_base64("cHJvamV0b2JpMTIz") # Senha local para desenvolvimento
+
+# Em produção no Streamlit Community Cloud, use st.secrets
+DB_HOST = st.secrets.get("DB_HOST", os.environ.get("DB_HOST"))
+DB_PORT = st.secrets.get("DB_PORT", os.environ.get("DB_PORT"))
+DB_NAME = st.secrets.get("DB_NAME", os.environ.get("DB_NAME"))
+DB_USER = st.secrets.get("DB_USER", os.environ.get("DB_USER"))
+DB_PASSWORD = st.secrets.get("DB_PASSWORD", os.environ.get("DB_PASSWORD"))
 
 # --- Database Connection --- 
 @st.cache_resource # Cache the connection for efficiency
 def get_db_connection():
     """Estabelece uma conexão com o banco de dados PostgreSQL."""
+    if not all([DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD]):
+        st.error("As credenciais do banco de dados não foram configuradas corretamente como secrets. Verifique as configurações de implantação.")
+        return None
     try:
         conn = psycopg2.connect(
             host=DB_HOST,
@@ -93,6 +106,14 @@ df_pib_orig = fetch_data(query_pib)
 
 # --- Sidebar Filters --- 
 st.sidebar.header("Filtros de Período (Visualização Histórica)")
+
+# Botão para Atualizar Dados
+if st.sidebar.button("🔄 Atualizar Dados do Dashboard", key="refresh_data_button"):
+    st.cache_data.clear()
+    st.cache_resource.clear()
+    st.success("Cache de dados limpo! O dashboard será recarregado com os dados mais recentes do banco.")
+    st.experimental_rerun()
+
 all_years = set()
 if not df_selic_orig.empty and "ano" in df_selic_orig.columns: all_years.update(df_selic_orig["ano"].unique())
 if not df_ipca_orig.empty and "ano" in df_ipca_orig.columns: all_years.update(df_ipca_orig["ano"].unique())
