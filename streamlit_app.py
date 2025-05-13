@@ -112,7 +112,7 @@ if st.sidebar.button("🔄 Atualizar Dados do Dashboard", key="refresh_data_butt
     st.cache_data.clear()
     st.cache_resource.clear()
     st.success("Cache de dados limpo! O dashboard será recarregado com os dados mais recentes do banco.")
-    st.experimental_rerun()
+    st.rerun()
 
 all_years = set()
 if not df_selic_orig.empty and "ano" in df_selic_orig.columns: all_years.update(df_selic_orig["ano"].unique())
@@ -365,4 +365,3 @@ with st.expander(f"Ver dados brutos transformados ({filter_label})"):
     show_pib = st.checkbox("Mostrar Dados PIB", value=False, key="cb_pib")
     if show_pib and not df_pib_filtered.empty: st.dataframe(df_pib_filtered)
     elif show_pib: st.write("Sem dados de PIB para o período.")
-
