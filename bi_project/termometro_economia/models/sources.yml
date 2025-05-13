@@ -1,0 +1,71 @@
+version: 2
+
+sources:
+  - name: public # This is the schema where raw data was loaded
+    description: "Raw data loaded from BCB API and IBGE SIDRA API."
+    tables:
+      - name: selic
+        description: "Raw Selic rate data."
+        columns:
+          - name: data
+            description: "Date of the record."
+            tests:
+              - unique
+              - not_null
+          - name: valor
+            description: "Selic rate value."
+            tests:
+              - not_null
+
+      - name: ipca
+        description: "Raw IPCA index data."
+        columns:
+          - name: data
+            description: "Date of the record."
+            tests:
+              - unique
+              - not_null
+          - name: valor
+            description: "IPCA index value."
+            tests:
+              - not_null
+
+      - name: cambio_ptax_venda
+        description: "Raw PTAX USD/BRL exchange rate (sell) data."
+        columns:
+          - name: data
+            description: "Date of the record."
+            tests:
+              - unique
+              - not_null
+          - name: valor
+            description: "PTAX sell rate value."
+            tests:
+              - not_null
+
+      - name: desemprego
+        description: "Raw unemployment rate data (PNAD Contínua - IBGE SIDRA 6381)."
+        columns:
+          - name: data
+            description: "Reference date (last day of the mobile quarter)."
+            tests:
+              - unique
+              - not_null
+          - name: valor
+            description: "Unemployment rate value (%)"
+            tests:
+              - not_null
+
+      - name: pib_trimestral
+        description: "Raw quarterly GDP data (Contas Nacionais Trimestrais - IBGE SIDRA 1620). Values are in R$ millions."
+        columns:
+          - name: data
+            description: "Reference date (last day of the quarter)."
+            tests:
+              - unique
+              - not_null
+          - name: valor
+            description: "Quarterly GDP value (R$ millions)."
+            tests:
+              - not_null
+

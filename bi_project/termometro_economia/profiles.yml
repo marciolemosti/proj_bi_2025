@@ -1,0 +1,14 @@
+termometro_economia:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "aws-0-us-west-1.pooler.supabase.com"
+      user: "postgres.exjrfoajzobkncnoompk"
+      pass: "{{ env_var('SUPABASE_PASSWORD') }}"  # Modificado para usar variável de ambiente
+      port: 6543
+      dbname: "postgres"
+      schema: "public"
+      threads: 1
+      connect_timeout: 10
+
