@@ -5,26 +5,24 @@ import psycopg2
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
+import pytz # Adicionado para fuso horário
 import math
 from prophet import Prophet
 from prophet.plot import plot_plotly, plot_components_plotly
 import base64
 import os # Adicionado para os.environ
 
+def get_current_brasilia_time():
+    """Retorna a data e hora atual no fuso horário de Brasília."""
+    brasilia_tz = pytz.timezone("America/Sao_Paulo")
+    now_brasilia = datetime.now(brasilia_tz)
+    return now_brasilia.strftime("%d/%m/%Y %H:%M:%S")
+
 def decode_base64(encoded_string):
     """Decodes a Base64 encoded string."""
     return base64.b64decode(encoded_string).decode("utf-8")
 
 # --- Database Credentials (Lidas de st.secrets para produção) ---
-# Para desenvolvimento local, você pode descomentar as linhas abaixo
-# ou configurar um arquivo secrets.toml local.
-# DB_HOST = "aws-0-us-west-1.pooler.supabase.com"
-# DB_PORT = "6543"
-# DB_NAME = "postgres"
-# DB_USER = "postgres.exjrfoajzobkncnoompk"
-# DB_PASSWORD = decode_base64("cHJvamV0b2JpMTIz") # Senha local para desenvolvimento
-
-# Em produção no Streamlit Community Cloud, use st.secrets
 DB_HOST = st.secrets.get("DB_HOST", os.environ.get("DB_HOST"))
 DB_PORT = st.secrets.get("DB_PORT", os.environ.get("DB_PORT"))
 DB_NAME = st.secrets.get("DB_NAME", os.environ.get("DB_NAME"))
@@ -88,8 +86,13 @@ def get_period_groups(years, group_size):
 
 # --- Streamlit App Layout --- 
 st.set_page_config(page_title="Projeto final de BI - Termômetro da economia", layout="wide")
+
+# Placeholder para banner no topo
+# st.image("caminho/para/seu/banner.png", use_column_width=True) 
+
 st.title("🇧🇷 Projeto final de BI - Termômetro da economia")
 st.markdown("Dashboard interativo com indicadores econômicos chave do Brasil.")
+st.caption(f"Dashboard carregado em: {get_current_brasilia_time()} (Horário de Brasília). Dados atualizados conforme fontes originais.")
 
 # --- Fetch Data --- 
 query_selic = "SELECT data_referencia, taxa_selic_percentual AS selic FROM public.stg_selic ORDER BY data_referencia ASC;"
@@ -177,41 +180,60 @@ df_pib_filtered = filter_df_by_years(df_pib_orig, selected_years_final)
 
 # --- Display Key Metrics --- 
 st.header("Últimos Valores Registrados")
+# Placeholder para ícones ao lado do header
+# col_header_icon, col_header_title = st.columns([1,10])
+# with col_header_icon: st.image("caminho/para/icone_metricas.png")
+# with col_header_title: st.header("Últimos Valores Registrados")
+
 col_m1, col_m2, col_m3, col_m4, col_m5 = st.columns(5) 
 
 with col_m1:
+    # Placeholder para ícone Selic
+    # st.image("caminho/para/icone_selic.png", width=30)
     if not df_selic_orig.empty:
-        latest_selic = df_selic_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
-        st.metric(label=f"Selic (% a.a.) - {latest_selic['data_referencia'].strftime('%d/%m/%Y')}", value=f"{latest_selic['selic']:.2f}%")
+        latest_selic = df_selic_orig.sort_values(by=\'data_referencia\', ascending=False).iloc[0]
+        st.metric(label=f"Selic (% a.a.) - {latest_selic[\'data_referencia\'].strftime(\'%d/%m/%Y\')}", value=f"{latest_selic[\'selic\']:.2f}%")
     else:
         st.metric(label="Selic (% a.a.)", value="N/D")
 with col_m2:
+    # Placeholder para ícone IPCA
+    # st.image("caminho/para/icone_ipca.png", width=30)
     if not df_ipca_orig.empty:
-        latest_ipca = df_ipca_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
-        st.metric(label=f"IPCA (Índice) - {latest_ipca['data_referencia'].strftime('%d/%m/%Y')}", value=f"{latest_ipca['ipca']:.2f}")
+        latest_ipca = df_ipca_orig.sort_values(by=\'data_referencia\', ascending=False).iloc[0]
+        st.metric(label=f"IPCA (Índice) - {latest_ipca[\'data_referencia\'].strftime(\'%d/%m/%Y\')}", value=f"{latest_ipca[\'ipca\']:.2f}")
     else:
         st.metric(label="IPCA", value="N/D")
 with col_m3:
+    # Placeholder para ícone Câmbio
+    # st.image("caminho/para/icone_cambio.png", width=30)
     if not df_cambio_orig.empty:
-        latest_cambio = df_cambio_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
-        st.metric(label=f"Câmbio (R$/US$) - {latest_cambio['data_referencia'].strftime('%d/%m/%Y')}", value=f"R$ {latest_cambio['cambio']:.2f}")
+        latest_cambio = df_cambio_orig.sort_values(by=\'data_referencia\', ascending=False).iloc[0]
+        st.metric(label=f"Câmbio (R$/US$) - {latest_cambio[\'data_referencia\'].strftime(\'%d/%m/%Y\')}", value=f"R$ {latest_cambio[\'cambio\']:.2f}")
     else:
         st.metric(label="Câmbio (R$/US$)", value="N/D")
 with col_m4:
+    # Placeholder para ícone Desemprego
+    # st.image("caminho/para/icone_desemprego.png", width=30)
     if not df_desemprego_orig.empty:
-        latest_desemprego = df_desemprego_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
-        st.metric(label=f"Desemprego (%) - {latest_desemprego['data_referencia'].strftime('%d/%m/%Y')}", value=f"{latest_desemprego['desemprego']:.1f}%")
+        latest_desemprego = df_desemprego_orig.sort_values(by=\'data_referencia\', ascending=False).iloc[0]
+        st.metric(label=f"Desemprego (%) - {latest_desemprego[\'data_referencia\'].strftime(\'%d/%m/%Y\')}", value=f"{latest_desemprego[\'desemprego\']:.1f}%")
     else:
         st.metric(label="Desemprego (%)", value="N/D")
 with col_m5: 
+    # Placeholder para ícone PIB
+    # st.image("caminho/para/icone_pib.png", width=30)
     if not df_pib_orig.empty:
-        latest_pib = df_pib_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
-        st.metric(label=f"PIB (R$ Bilhões) - {latest_pib['data_referencia'].strftime('%d/%m/%Y')}", value=f"R$ {latest_pib['pib']/1e3:.2f} Bi") 
+        latest_pib = df_pib_orig.sort_values(by=\'data_referencia\', ascending=False).iloc[0]
+        st.metric(label=f"PIB (R$ Bilhões) - {latest_pib[\'data_referencia\'].strftime(\'%d/%m/%Y\')}", value=f"R$ {latest_pib[\'pib\']/1e3:.2f} Bi") 
     else:
         st.metric(label="PIB (R$ Milhões)", value="N/D")
 
 # --- Display Charts --- 
 st.header(f"Visualização Histórica de Indicadores Macroeconômicos ({filter_label})")
+# Placeholder para ícones ao lado do header
+# col_header_icon_charts, col_header_title_charts = st.columns([1,10])
+# with col_header_icon_charts: st.image("caminho/para/icone_charts.png")
+# with col_header_title_charts: st.header(f"Visualização Histórica de Indicadores Macroeconômicos ({filter_label})")
 col1, col2, col3 = st.columns(3) 
 
 def plot_indicator(df, x_col, y_col, title, labels, y_format, col_obj):
@@ -233,6 +255,10 @@ plot_indicator(df_pib_filtered, "data_referencia", "pib", "PIB Trimestral (R$ Mi
 
 # --- Correlation Analysis --- 
 st.header(f"Análise de Correlação ({filter_label})")
+# Placeholder para ícones ao lado do header
+# col_header_icon_corr, col_header_title_corr = st.columns([1,10])
+# with col_header_icon_corr: st.image("caminho/para/icone_corr.png")
+# with col_header_title_corr: st.header(f"Análise de Correlação ({filter_label})")
 indicator_options_corr = {
     "Selic (% a.a.)": df_selic_filtered,
     "IPCA (Índice)": df_ipca_filtered,
@@ -252,8 +278,8 @@ if len(valid_indicators_corr) >= 2:
              st.warning("Selecione pelo menos dois indicadores com dados disponíveis para correlação.")
         else:
             indicator2_name = st.selectbox("Selecione o segundo indicador para correlação:", available_options_y, index=0, key="corr_ind2")
-            df1 = valid_indicators_corr[indicator1_name].set_index('data_referencia')
-            df2 = valid_indicators_corr[indicator2_name].set_index('data_referencia')
+            df1 = valid_indicators_corr[indicator1_name].set_index(\'data_referencia\')
+            df2 = valid_indicators_corr[indicator2_name].set_index(\'data_referencia\')
             df_merged = pd.merge(df1, df2, left_index=True, right_index=True, how="inner")
             if not df_merged.empty and len(df_merged) > 1:
                 col_name1 = df_merged.columns[0]
@@ -272,6 +298,10 @@ else:
 
 # --- Forecasting Section ---
 st.header("Previsão de Indicadores")
+# Placeholder para ícones ao lado do header
+# col_header_icon_forecast, col_header_title_forecast = st.columns([1,10])
+# with col_header_icon_forecast: st.image("caminho/para/icone_forecast.png")
+# with col_header_title_forecast: st.header("Previsão de Indicadores")
 
 indicator_options_forecast = {
     "Selic": (df_selic_orig, "selic"),
@@ -320,48 +350,22 @@ if st.button("Gerar Previsão", key="generate_forecast_button"):
                 fig_components = plot_components_plotly(model, forecast)
                 # Tentar traduzir os eixos dos subplots
                 for i in range(1, 10): # Tentar para um número razoável de possíveis subplots
-                    if hasattr(fig_components.layout, f"xaxis{i}"):
-                        fig_components.layout[f"xaxis{i}"].title.text = "Data"
-                    if hasattr(fig_components.layout, f"yaxis{i}"):
-                        fig_components.layout[f"yaxis{i}"].title.text = "Valor"
-                # Caso o primeiro eixo não tenha número (ex: xaxis, yaxis)
-                if hasattr(fig_components.layout, "xaxis") and fig_components.layout.xaxis.title.text:
-                    fig_components.layout.xaxis.title.text = "Data"
-                if hasattr(fig_components.layout, "yaxis") and fig_components.layout.yaxis.title.text:
-                    fig_components.layout.yaxis.title.text = "Valor"
-
+                    try:
+                        fig_components.layout[f"xaxis{i}"].title = "Data"
+                        fig_components.layout[f"yaxis{i}"].title = "Valor"
+                    except Exception:
+                        pass # Ignora se o subplot não existir ou não tiver título configurável
                 st.plotly_chart(fig_components, use_container_width=True)
-                st.subheader("Dados da Previsão")
-                forecast_display = forecast[["ds", "yhat", "yhat_lower", "yhat_upper"]].tail(forecast_periods).copy()
-                forecast_display.rename(columns={
-                    "ds": "Data",
-                    "yhat": "Previsão",
-                    "yhat_lower": "Previsão Inferior",
-                    "yhat_upper": "Previsão Superior"
-                }, inplace=True)
-                st.dataframe(forecast_display)
 
+                st.subheader("Dados da Previsão")
+                st.dataframe(forecast[["ds", "yhat", "yhat_lower", "yhat_upper"]].rename(columns={
+                    "ds": "Data", "yhat": "Previsão", "yhat_lower": "Limite Inferior", "yhat_upper": "Limite Superior"
+                }).tail(forecast_periods))
             except Exception as e:
                 st.error(f"Erro ao gerar previsão para {selected_indicator_forecast_name}: {e}")
-                print(f"Erro Prophet para {selected_indicator_forecast_name}: {e}")
+                print(f"Erro ao gerar previsão para {selected_indicator_forecast_name}: {e}")
 
-st.markdown("--- ")
-st.markdown(f"_Dados atualizados até onde disponíveis nas fontes originais. Última verificação: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}_ ")
+st.sidebar.markdown("---_---")
+st.sidebar.info("Desenvolvido por Márcio José Lemos Garcia")
+st.sidebar.info("MBA em Gestão Analítica com BI e Big Data")
 
-# --- Display Raw Data (Filtered) ---
-with st.expander(f"Ver dados brutos transformados ({filter_label})"):
-    show_selic = st.checkbox("Mostrar Dados Selic", value=False, key="cb_selic")
-    if show_selic and not df_selic_filtered.empty: st.dataframe(df_selic_filtered)
-    elif show_selic: st.write("Sem dados de Selic para o período.")
-    show_ipca = st.checkbox("Mostrar Dados IPCA", value=False, key="cb_ipca")
-    if show_ipca and not df_ipca_filtered.empty: st.dataframe(df_ipca_filtered)
-    elif show_ipca: st.write("Sem dados de IPCA para o período.")
-    show_cambio = st.checkbox("Mostrar Dados Câmbio", value=False, key="cb_cambio")
-    if show_cambio and not df_cambio_filtered.empty: st.dataframe(df_cambio_filtered)
-    elif show_cambio: st.write("Sem dados de Câmbio para o período.")
-    show_desemprego = st.checkbox("Mostrar Dados Desemprego", value=False, key="cb_desemprego")
-    if show_desemprego and not df_desemprego_filtered.empty: st.dataframe(df_desemprego_filtered)
-    elif show_desemprego: st.write("Sem dados de Desemprego para o período.")
-    show_pib = st.checkbox("Mostrar Dados PIB", value=False, key="cb_pib")
-    if show_pib and not df_pib_filtered.empty: st.dataframe(df_pib_filtered)
-    elif show_pib: st.write("Sem dados de PIB para o período.")
