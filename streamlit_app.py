@@ -85,12 +85,12 @@ def get_period_groups(years, group_size):
     return groups
 
 # --- Streamlit App Layout --- 
-st.set_page_config(page_title="Projeto Final de BI - Termômetro da economia Brasileira", layout="wide")
+st.set_page_config(page_title="Projeto final de BI - Termômetro da economia", layout="wide")
 
-# Placeholder para banner no topo
-# st.image("caminho/para/seu/banner.png", use_column_width=True) 
+# Banner no topo
+st.image("assets/banner.png", use_column_width=True) 
 
-st.title("🇧🇷 Projeto final de BI - Termômetro da economia")
+st.title("🇧🇷 Projeto final de BI - Termômetro da Economia Brasileira")
 st.markdown("Dashboard interativo com indicadores econômicos do Brasil.")
 st.caption(f"Dashboard carregado em: {get_current_brasilia_time()} (Horário de Brasília). Dados atualizados conforme fontes originais.")
 
@@ -170,7 +170,7 @@ def filter_df_by_years(df, years):
         return df
     df_copy = df.copy()
     df_copy["ano"] = pd.to_numeric(df_copy["ano"], errors="coerce")
-    return df_copy[df_copy["ano"].isin(years)].sort_values(by="data_referencia")
+    return df_copy[df_copy["ano"].isin(years)].sort_values(by='data_referencia')
 
 df_selic_filtered = filter_df_by_years(df_selic_orig, selected_years_final)
 df_ipca_filtered = filter_df_by_years(df_ipca_orig, selected_years_final)
@@ -179,49 +179,44 @@ df_desemprego_filtered = filter_df_by_years(df_desemprego_orig, selected_years_f
 df_pib_filtered = filter_df_by_years(df_pib_orig, selected_years_final) 
 
 # --- Display Key Metrics --- 
-st.header("Últimos Valores Registrados")
-# Placeholder para ícones ao lado do header
-# col_header_icon, col_header_title = st.columns([1,10])
-# with col_header_icon: st.image("caminho/para/icone_metricas.png")
-# with col_header_title: st.header("Últimos Valores Registrados")
+col_header_icon_metricas, col_header_title_metricas = st.columns([0.05, 0.95])
+with col_header_icon_metricas:
+    st.image("assets/meta.png", width=40)
+with col_header_title_metricas:
+    st.header("Últimos Valores Registrados")
 
 col_m1, col_m2, col_m3, col_m4, col_m5 = st.columns(5) 
 
 with col_m1:
-    # Placeholder para ícone Selic
-    # st.image("caminho/para/icone_selic.png", width=30)
+    st.image("assets/selic.png", width=30)
     if not df_selic_orig.empty:
         latest_selic = df_selic_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
         st.metric(label=f"Selic (% a.a.) - {latest_selic['data_referencia'].strftime('%d/%m/%Y')}", value=f"{latest_selic['selic']:.2f}%")
     else:
         st.metric(label="Selic (% a.a.)", value="N/D")
 with col_m2:
-    # Placeholder para ícone IPCA
-    # st.image("caminho/para/icone_ipca.png", width=30)
+    st.image("assets/inflacao.png", width=30)
     if not df_ipca_orig.empty:
         latest_ipca = df_ipca_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
         st.metric(label=f"IPCA (Índice) - {latest_ipca['data_referencia'].strftime('%d/%m/%Y')}", value=f"{latest_ipca['ipca']:.2f}")
     else:
         st.metric(label="IPCA", value="N/D")
 with col_m3:
-    # Placeholder para ícone Câmbio
-    # st.image("caminho/para/icone_cambio.png", width=30)
+    st.image("assets/cambio.png", width=30)
     if not df_cambio_orig.empty:
         latest_cambio = df_cambio_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
         st.metric(label=f"Câmbio (R$/US$) - {latest_cambio['data_referencia'].strftime('%d/%m/%Y')}", value=f"R$ {latest_cambio['cambio']:.2f}")
     else:
         st.metric(label="Câmbio (R$/US$)", value="N/D")
 with col_m4:
-    # Placeholder para ícone Desemprego
-    # st.image("caminho/para/icone_desemprego.png", width=30)
+    st.image("assets/desemprego.png", width=30)
     if not df_desemprego_orig.empty:
         latest_desemprego = df_desemprego_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
         st.metric(label=f"Desemprego (%) - {latest_desemprego['data_referencia'].strftime('%d/%m/%Y')}", value=f"{latest_desemprego['desemprego']:.1f}%")
     else:
         st.metric(label="Desemprego (%)", value="N/D")
 with col_m5: 
-    # Placeholder para ícone PIB
-    # st.image("caminho/para/icone_pib.png", width=30)
+    st.image("assets/pib.png", width=30)
     if not df_pib_orig.empty:
         latest_pib = df_pib_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
         st.metric(label=f"PIB (R$ Bilhões) - {latest_pib['data_referencia'].strftime('%d/%m/%Y')}", value=f"R$ {latest_pib['pib']/1e3:.2f} Bi") 
@@ -229,11 +224,12 @@ with col_m5:
         st.metric(label="PIB (R$ Milhões)", value="N/D")
 
 # --- Display Charts --- 
-st.header(f"Visualização Histórica de Indicadores Macroeconômicos ({filter_label})")
-# Placeholder para ícones ao lado do header
-# col_header_icon_charts, col_header_title_charts = st.columns([1,10])
-# with col_header_icon_charts: st.image("caminho/para/icone_charts.png")
-# with col_header_title_charts: st.header(f"Visualização Histórica de Indicadores Macroeconômicos ({filter_label})")
+col_header_icon_charts, col_header_title_charts = st.columns([0.05, 0.95])
+with col_header_icon_charts:
+    st.image("assets/mercado-de-acoes.png", width=40)
+with col_header_title_charts:
+    st.header(f"Visualização Histórica de Indicadores Macroeconômicos ({filter_label})")
+
 col1, col2, col3 = st.columns(3) 
 
 def plot_indicator(df, x_col, y_col, title, labels, y_format, col_obj):
@@ -254,11 +250,12 @@ plot_indicator(df_desemprego_filtered, "data_referencia", "desemprego", "Taxa de
 plot_indicator(df_pib_filtered, "data_referencia", "pib", "PIB Trimestral (R$ Milhões)", {"data_referencia": "Data", "pib": "Valor (R$ Milhões)"}, ",.0f", col3) 
 
 # --- Correlation Analysis --- 
-st.header(f"Análise de Correlação ({filter_label})")
-# Placeholder para ícones ao lado do header
-# col_header_icon_corr, col_header_title_corr = st.columns([1,10])
-# with col_header_icon_corr: st.image("caminho/para/icone_corr.png")
-# with col_header_title_corr: st.header(f"Análise de Correlação ({filter_label})")
+col_header_icon_corr, col_header_title_corr = st.columns([0.05, 0.95])
+with col_header_icon_corr:
+    st.image("assets/dispersao-espalhar.png", width=40)
+with col_header_title_corr:
+    st.header(f"Análise de Correlação ({filter_label})")
+
 indicator_options_corr = {
     "Selic (% a.a.)": df_selic_filtered,
     "IPCA (Índice)": df_ipca_filtered,
@@ -297,11 +294,11 @@ else:
     st.warning("Dados insuficientes para análise de correlação. Verifique os filtros ou a disponibilidade dos dados.")
 
 # --- Forecasting Section ---
-st.header("Previsão de Indicadores")
-# Placeholder para ícones ao lado do header
-# col_header_icon_forecast, col_header_title_forecast = st.columns([1,10])
-# with col_header_icon_forecast: st.image("caminho/para/icone_forecast.png")
-# with col_header_title_forecast: st.header("Previsão de Indicadores")
+col_header_icon_forecast, col_header_title_forecast = st.columns([0.05, 0.95])
+with col_header_icon_forecast:
+    st.image("assets/previsao.png", width=40)
+with col_header_title_forecast:
+    st.header("Previsão de Indicadores")
 
 indicator_options_forecast = {
     "Selic": (df_selic_orig, "selic"),
@@ -347,6 +344,7 @@ if st.button("Gerar Previsão", key="generate_forecast_button"):
                 st.plotly_chart(fig_forecast, use_container_width=True)
 
                 st.subheader(f"Componentes da Previsão para {selected_indicator_forecast_name}")
+                # Removido xlabel e ylabel para compatibilidade, conforme investigações anteriores
                 fig_components = plot_components_plotly(model, forecast)
                 # Tentar traduzir os eixos dos subplots
                 for i in range(1, 10): # Tentar para um número razoável de possíveis subplots
@@ -367,4 +365,4 @@ if st.button("Gerar Previsão", key="generate_forecast_button"):
 
 st.sidebar.markdown("---_---")
 st.sidebar.info("Desenvolvido por Márcio José Lemos Garcia")
-st.sidebar.info("MBA em Gestão Analítica com BI e Big Data - UNIFOR")
+st.sidebar.info("MBA em Gestão Analítica com BI e Big Data")
