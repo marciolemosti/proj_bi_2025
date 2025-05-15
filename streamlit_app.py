@@ -88,9 +88,9 @@ def get_period_groups(years, group_size):
 st.set_page_config(page_title="Projeto final de BI - Termômetro da economia", layout="wide")
 
 # Banner no topo
-st.image("assets/banner.png", use_column_width=True) 
+st.image("assets/banner.png", width=600) 
 
-st.title("🇧🇷 Projeto final de BI - Termômetro da Economia Brasileira")
+st.title("🇧🇷 Projeto Final de BI - Termômetro da Economia Brasileira")
 st.markdown("Dashboard interativo com indicadores econômicos do Brasil.")
 st.caption(f"Dashboard carregado em: {get_current_brasilia_time()} (Horário de Brasília). Dados atualizados conforme fontes originais.")
 
