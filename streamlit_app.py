@@ -85,13 +85,13 @@ def get_period_groups(years, group_size):
     return groups
 
 # --- Streamlit App Layout --- 
-st.set_page_config(page_title="Projeto final de BI - Termômetro da economia", layout="wide")
+st.set_page_config(page_title="Projeto Final de BI - Termômetro da economia Brasileira", layout="wide")
 
 # Placeholder para banner no topo
 # st.image("caminho/para/seu/banner.png", use_column_width=True) 
 
 st.title("🇧🇷 Projeto final de BI - Termômetro da economia")
-st.markdown("Dashboard interativo com indicadores econômicos chave do Brasil.")
+st.markdown("Dashboard interativo com indicadores econômicos do Brasil.")
 st.caption(f"Dashboard carregado em: {get_current_brasilia_time()} (Horário de Brasília). Dados atualizados conforme fontes originais.")
 
 # --- Fetch Data --- 
@@ -191,40 +191,40 @@ with col_m1:
     # Placeholder para ícone Selic
     # st.image("caminho/para/icone_selic.png", width=30)
     if not df_selic_orig.empty:
-        latest_selic = df_selic_orig.sort_values(by=\'data_referencia\', ascending=False).iloc[0]
-        st.metric(label=f"Selic (% a.a.) - {latest_selic[\'data_referencia\'].strftime(\'%d/%m/%Y\')}", value=f"{latest_selic[\'selic\']:.2f}%")
+        latest_selic = df_selic_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
+        st.metric(label=f"Selic (% a.a.) - {latest_selic['data_referencia'].strftime('%d/%m/%Y')}", value=f"{latest_selic['selic']:.2f}%")
     else:
         st.metric(label="Selic (% a.a.)", value="N/D")
 with col_m2:
     # Placeholder para ícone IPCA
     # st.image("caminho/para/icone_ipca.png", width=30)
     if not df_ipca_orig.empty:
-        latest_ipca = df_ipca_orig.sort_values(by=\'data_referencia\', ascending=False).iloc[0]
-        st.metric(label=f"IPCA (Índice) - {latest_ipca[\'data_referencia\'].strftime(\'%d/%m/%Y\')}", value=f"{latest_ipca[\'ipca\']:.2f}")
+        latest_ipca = df_ipca_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
+        st.metric(label=f"IPCA (Índice) - {latest_ipca['data_referencia'].strftime('%d/%m/%Y')}", value=f"{latest_ipca['ipca']:.2f}")
     else:
         st.metric(label="IPCA", value="N/D")
 with col_m3:
     # Placeholder para ícone Câmbio
     # st.image("caminho/para/icone_cambio.png", width=30)
     if not df_cambio_orig.empty:
-        latest_cambio = df_cambio_orig.sort_values(by=\'data_referencia\', ascending=False).iloc[0]
-        st.metric(label=f"Câmbio (R$/US$) - {latest_cambio[\'data_referencia\'].strftime(\'%d/%m/%Y\')}", value=f"R$ {latest_cambio[\'cambio\']:.2f}")
+        latest_cambio = df_cambio_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
+        st.metric(label=f"Câmbio (R$/US$) - {latest_cambio['data_referencia'].strftime('%d/%m/%Y')}", value=f"R$ {latest_cambio['cambio']:.2f}")
     else:
         st.metric(label="Câmbio (R$/US$)", value="N/D")
 with col_m4:
     # Placeholder para ícone Desemprego
     # st.image("caminho/para/icone_desemprego.png", width=30)
     if not df_desemprego_orig.empty:
-        latest_desemprego = df_desemprego_orig.sort_values(by=\'data_referencia\', ascending=False).iloc[0]
-        st.metric(label=f"Desemprego (%) - {latest_desemprego[\'data_referencia\'].strftime(\'%d/%m/%Y\')}", value=f"{latest_desemprego[\'desemprego\']:.1f}%")
+        latest_desemprego = df_desemprego_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
+        st.metric(label=f"Desemprego (%) - {latest_desemprego['data_referencia'].strftime('%d/%m/%Y')}", value=f"{latest_desemprego['desemprego']:.1f}%")
     else:
         st.metric(label="Desemprego (%)", value="N/D")
 with col_m5: 
     # Placeholder para ícone PIB
     # st.image("caminho/para/icone_pib.png", width=30)
     if not df_pib_orig.empty:
-        latest_pib = df_pib_orig.sort_values(by=\'data_referencia\', ascending=False).iloc[0]
-        st.metric(label=f"PIB (R$ Bilhões) - {latest_pib[\'data_referencia\'].strftime(\'%d/%m/%Y\')}", value=f"R$ {latest_pib[\'pib\']/1e3:.2f} Bi") 
+        latest_pib = df_pib_orig.sort_values(by='data_referencia', ascending=False).iloc[0]
+        st.metric(label=f"PIB (R$ Bilhões) - {latest_pib['data_referencia'].strftime('%d/%m/%Y')}", value=f"R$ {latest_pib['pib']/1e3:.2f} Bi") 
     else:
         st.metric(label="PIB (R$ Milhões)", value="N/D")
 
@@ -278,8 +278,8 @@ if len(valid_indicators_corr) >= 2:
              st.warning("Selecione pelo menos dois indicadores com dados disponíveis para correlação.")
         else:
             indicator2_name = st.selectbox("Selecione o segundo indicador para correlação:", available_options_y, index=0, key="corr_ind2")
-            df1 = valid_indicators_corr[indicator1_name].set_index(\'data_referencia\')
-            df2 = valid_indicators_corr[indicator2_name].set_index(\'data_referencia\')
+            df1 = valid_indicators_corr[indicator1_name].set_index('data_referencia')
+            df2 = valid_indicators_corr[indicator2_name].set_index('data_referencia')
             df_merged = pd.merge(df1, df2, left_index=True, right_index=True, how="inner")
             if not df_merged.empty and len(df_merged) > 1:
                 col_name1 = df_merged.columns[0]
@@ -367,5 +367,4 @@ if st.button("Gerar Previsão", key="generate_forecast_button"):
 
 st.sidebar.markdown("---_---")
 st.sidebar.info("Desenvolvido por Márcio José Lemos Garcia")
-st.sidebar.info("MBA em Gestão Analítica com BI e Big Data")
-
+st.sidebar.info("MBA em Gestão Analítica com BI e Big Data - UNIFOR")
