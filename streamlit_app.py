@@ -364,5 +364,5 @@ if st.button("Gerar Previsão", key="generate_forecast_button"):
                 print(f"Erro ao gerar previsão para {selected_indicator_forecast_name}: {e}")
 
 st.sidebar.markdown("---_---")
-st.sidebar.info("Desenvolvido por Márcio José Lemos Garcia")
+st.sidebar.info("Desenvolvido por Márcio Lemos")
 st.sidebar.info("MBA em Gestão Analítica com BI e Big Data")
